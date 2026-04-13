@@ -9,7 +9,7 @@ import type {
   UpdateCommonRoomRequest,
 } from "../types/building";
 
-const BASE_API_URL = process.env.BASE_API_URL || "http://localhost:8080";
+const BASE_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
 
 function getErrorMessage(status: number, errorBody?: ApiErrorResponse) {
   if (status >= 500) {

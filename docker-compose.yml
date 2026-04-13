@@ -1,0 +1,56 @@
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: building-climate-postgres
+    environment:
+      POSTGRES_DB: building_climate_control
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend/building-climate-control
+    container_name: building-climate-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/building_climate_control
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SIMULATION_INTERVAL_MS: 10000
+      TEMPERATURE_THRESHOLD: 0.5
+      TEMPERATURE_COOLINGRATE: 0.2
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend/building-climate-control
+    container_name: building-climate-frontend
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+
+  backend-tests:
+    build:
+      context: ./backend/building-climate-control
+      dockerfile: Dockerfile
+      target: builder
+    container_name: building-climate-backend-tests
+    working_dir: /app
+    command: ["./mvnw", "test"]
+    environment:
+      SPRING_PROFILES_ACTIVE: test
+
+volumes:
+  postgres_data:
+
