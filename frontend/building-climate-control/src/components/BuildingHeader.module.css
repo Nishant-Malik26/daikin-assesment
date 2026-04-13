@@ -1,0 +1,18 @@
+.statBlock {
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+
+.statLabel {
+  display: block;
+  color: #52667a;
+  margin-bottom: 8px;
+}
+
+.statValue {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #102a43;
+}

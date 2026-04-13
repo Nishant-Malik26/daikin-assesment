@@ -1,0 +1,28 @@
+.loading-shell {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+}
+
+.stat-block {
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+
+.stat-label {
+  display: block;
+  color: #52667a;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #102a43;
+}
+
+.page-content {
+  padding: 16px 24px;
+}
