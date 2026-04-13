@@ -11,6 +11,7 @@ import daikin.building_climate_control.model.CommonRoomResponse;
 import daikin.building_climate_control.model.RoomResponse;
 import daikin.building_climate_control.repository.BuildingRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,11 +24,13 @@ public class BuildingService {
         this.temperatureConfig = temperatureConfig;
     }
 
-    public BuildingResponse getBuilding(){
-        Building building =  buildingRepository.findAll()
-                .stream()
-                .findFirst()
+    private Building getDefaultBuilding() {
+        return buildingRepository.findAll().stream().findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Building not found"));
+    }
+    @Transactional(readOnly = true)
+    public BuildingResponse getBuilding(){
+        Building building = getDefaultBuilding();
         List<ApartmentResponse> apartmentResponses = building
                 .getApartments()
                 .stream()
@@ -39,11 +42,9 @@ public class BuildingService {
         return new BuildingResponse(building.getId(),apartmentResponses , commonRoomResponses,building.getRequestedTemperature());
     }
 
+    @Transactional
     public BuildingResponse updateTemperature(Float temperature) {
-        Building building = buildingRepository.findAll()
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("Building not found"));
+        Building building = getDefaultBuilding();
         building.setRequestedTemperature(temperature);
         for (Apartment apartment : building.getApartments()) {
             apartment.updateMode(temperature, temperatureConfig.getThreshold());

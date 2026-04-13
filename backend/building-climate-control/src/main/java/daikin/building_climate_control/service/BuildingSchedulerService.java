@@ -20,13 +20,15 @@ public class BuildingSchedulerService {
         this.buildingRepository = buildingRepository;
         this.temperatureConfig = temperatureConfig;
     }
+    private Building getDefaultBuilding() {
+        return buildingRepository.findAll().stream().findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Building not found"));
+    }
+
     @Transactional
     @Scheduled(fixedRateString =  "${simulation.interval.ms}")
     public void recalculateBuildingClimate() {
-        Building building = buildingRepository.findAll()
-                .stream()
-                .findFirst()
-                .orElseThrow(()-> new ResourceNotFoundException("Building not found"));
+        Building building = getDefaultBuilding();
 
         for (Apartment apartment : building.getApartments()) {
             apartment.coolingOrHeating(temperatureConfig.getCoolingRate());
